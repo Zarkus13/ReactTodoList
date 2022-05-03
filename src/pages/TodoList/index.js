@@ -1,63 +1,54 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-class TodoList extends React.Component {
-  itemToAddInput;
+const TodoList = () => {
+  const storageItems = JSON.parse(localStorage.getItem('todo-items') || '[]');
 
-  constructor(props) {
-    super(props);
+  const [itemsList, setItemsList] = useState(storageItems);
+  const [itemToAdd, setItemToAdd] = useState('');
 
-    const storageItems = JSON.parse(localStorage.getItem('todo-items') || '[]');
+  const inputRef = useRef();
 
-    this.state = {
-      itemsList: storageItems,
-      itemToAdd: ''
-    };
-  }
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
 
-  componentDidMount() {
-    this.itemToAddInput.focus();
-  }
+  const onAddItem = useCallback(() => {
+    const newItemsList = itemsList.concat([itemToAdd]);
 
-  render() {
-    return (
-      <>
-        <div>
-          <input
-            type="text"
-            value={this.state.itemToAdd}
-            onChange={this.onItemToAddChange}
-            ref={(ref) => { this.itemToAddInput = ref }}
-          />
+    setItemToAdd('');
+    setItemsList(newItemsList);
 
-          <button onClick={this.onAddItem}>
-            Add item
-          </button>
-        </div>
+    localStorage.setItem('todo-items', JSON.stringify(newItemsList));
+  }, [itemsList, itemToAdd]);
 
-        <ul>
-          {this.state.itemsList.map((item, id) =>
-            <li key={id}>
-              <Link to={`/item/${id}`}>{item}</Link>
-            </li>
-          )}
-        </ul>
-      </>
-    )
-  }
+  return (
+    <>
+      <div>
+        <input
+          type="text"
+          value={itemToAdd}
+          onChange={(event) => onItemToAddChange(event, setItemToAdd)}
+          ref={inputRef}
+        />
 
-  onItemToAddChange = (event) =>
-    this.setState({
-      itemToAdd: event.target.value
-    });
+        <button onClick={() => onAddItem()}>
+          Add item
+        </button>
+      </div>
 
-  onAddItem = () =>
-    this.setState({
-      itemsList: this.state.itemsList.concat([this.state.itemToAdd]),
-      itemToAdd: ''
-    }, () => {
-      localStorage.setItem('todo-items', JSON.stringify(this.state.itemsList));
-    });
-}
+      <ul>
+        {itemsList.map((item, id) =>
+          <li key={id}>
+            <Link to={`/item/${id}`}>{item}</Link>
+          </li>
+        )}
+      </ul>
+    </>
+  );
+};
+
+const onItemToAddChange = (event, setItemToAdd) =>
+  setItemToAdd(event.target.value);
 
 export default TodoList;
