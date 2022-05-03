@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { addTodoItem } from '../../reducers/todoListReducer';
 
 const TodoList = () => {
-  const storageItems = JSON.parse(localStorage.getItem('todo-items') || '[]');
-
-  const [itemsList, setItemsList] = useState(storageItems);
+  const itemsList = useSelector((state) => state.todoList.list);
   const [itemToAdd, setItemToAdd] = useState('');
 
+  const dispatch = useDispatch();
   const inputRef = useRef();
 
   useEffect(() => {
@@ -14,13 +15,9 @@ const TodoList = () => {
   }, []);
 
   const onAddItem = useCallback(() => {
-    const newItemsList = itemsList.concat([itemToAdd]);
-
+    dispatch(addTodoItem(itemToAdd));
     setItemToAdd('');
-    setItemsList(newItemsList);
-
-    localStorage.setItem('todo-items', JSON.stringify(newItemsList));
-  }, [itemsList, itemToAdd]);
+  }, [dispatch, addTodoItem, itemToAdd, setItemToAdd]);
 
   return (
     <>
