@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 class TodoList extends React.Component {
   itemToAddInput;
@@ -36,7 +37,9 @@ class TodoList extends React.Component {
 
         <ul>
           {this.state.itemsList.map((item, id) =>
-            <li key={id}>{item}</li>
+            <li key={id}>
+              <Link to={`/item/${id}`}>{item}</Link>
+            </li>
           )}
         </ul>
       </>

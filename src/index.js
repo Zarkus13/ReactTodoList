@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import TodoList from './TodoList';
+import { BrowserRouter } from 'react-router-dom';
+import Routing from './routes';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <TodoList />
+    <BrowserRouter>
+      <Routing />
+    </BrowserRouter>
   </React.StrictMode>
 );
 
